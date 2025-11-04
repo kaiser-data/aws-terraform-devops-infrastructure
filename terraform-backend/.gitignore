@@ -1,0 +1,11 @@
+# Terraform State (Local - This is the only one!)
+terraform.tfstate
+terraform.tfstate.*
+
+# Terraform Cache
+.terraform/
+.terraform.lock.hcl
+
+# Crash Logs
+crash.log
+*.log
