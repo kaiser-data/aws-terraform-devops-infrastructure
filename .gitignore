@@ -1,0 +1,45 @@
+# Terraform State Files (Contains all IPs, resource IDs, and secrets)
+terraform.tfstate
+terraform.tfstate.*
+*.tfstate
+*.tfstate.*
+
+# Terraform Variable Files with Real Values
+terraform.tfvars
+*.auto.tfvars
+
+# Generated Files with Real IPs
+deployment-info.txt
+
+# Terraform Provider Cache
+.terraform/
+.terraform.lock.hcl
+
+# Crash Logs
+crash.log
+crash.*.log
+
+# Override Files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# CLI Configuration Files
+.terraformrc
+terraform.rc
+
+# SSH Keys
+*.pem
+*.key
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# IDE Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
