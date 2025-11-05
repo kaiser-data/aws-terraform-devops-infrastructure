@@ -1,0 +1,27 @@
+---
+# Backend-specific variables
+
+# Containers to deploy on backend
+containers:
+  - name: redis
+    image: "redis:{{ redis_image_tag }}"
+    ports:
+      - "6379:6379"
+    restart_policy: always
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+
+  - name: worker
+    image: "{{ dockerhub_username }}/worker:{{ worker_image_tag }}"
+    environment:
+      REDIS_HOST: "{{ redis_host }}"
+      REDIS_PORT: "{{ redis_port }}"
+      POSTGRES_HOST: "{{ postgres_host }}"
+      POSTGRES_PORT: "{{ postgres_port }}"
+      POSTGRES_USER: "{{ postgres_user }}"
+      POSTGRES_PASSWORD: "{{ postgres_password }}"
+      POSTGRES_DB: "{{ postgres_db }}"
+    restart_policy: always
+    depends_on:
+      - redis

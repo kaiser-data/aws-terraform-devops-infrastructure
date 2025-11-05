@@ -1,0 +1,62 @@
+---
+- name: Test connectivity between services
+  hosts: all
+  become: yes
+  gather_facts: no
+
+  tasks:
+    - name: Install telnet for connectivity testing
+      ansible.builtin.apt:
+        name: telnet
+        state: present
+        update_cache: yes
+
+    - name: Test Redis connectivity from frontend
+      ansible.builtin.shell: timeout 3 telnet {{ redis_host }} {{ redis_port }} || echo "Connection failed"
+      register: redis_test
+      when: inventory_hostname in groups['frontend']
+      changed_when: false
+      ignore_errors: yes
+
+    - name: Display Redis connectivity result (frontend)
+      ansible.builtin.debug:
+        msg: "Redis connectivity from frontend: {{ 'SUCCESS' if redis_test.rc == 0 else 'FAILED' }}"
+      when: inventory_hostname in groups['frontend']
+
+    - name: Test PostgreSQL connectivity from backend
+      ansible.builtin.shell: timeout 3 telnet {{ postgres_host }} {{ postgres_port }} || echo "Connection failed"
+      register: postgres_test
+      when: inventory_hostname in groups['backend']
+      changed_when: false
+      ignore_errors: yes
+
+    - name: Display PostgreSQL connectivity result (backend)
+      ansible.builtin.debug:
+        msg: "PostgreSQL connectivity from backend: {{ 'SUCCESS' if postgres_test.rc == 0 else 'FAILED' }}"
+      when: inventory_hostname in groups['backend']
+
+    - name: Test PostgreSQL connectivity from frontend
+      ansible.builtin.shell: timeout 3 telnet {{ postgres_host }} {{ postgres_port }} || echo "Connection failed"
+      register: postgres_test_frontend
+      when: inventory_hostname in groups['frontend']
+      changed_when: false
+      ignore_errors: yes
+
+    - name: Display PostgreSQL connectivity result (frontend)
+      ansible.builtin.debug:
+        msg: "PostgreSQL connectivity from frontend: {{ 'SUCCESS' if postgres_test_frontend.rc == 0 else 'FAILED' }}"
+      when: inventory_hostname in groups['frontend']
+
+    - name: Check container environment variables
+      ansible.builtin.shell: |
+        for container in $(docker ps --format "{{ '{{' }}.Names{{ '}}' }}"); do
+          echo "=== Environment for $container ==="
+          docker exec "$container" env 2>/dev/null | grep -E "REDIS|POSTGRES" || echo "No relevant env vars"
+          echo ""
+        done
+      register: env_check
+      changed_when: false
+
+    - name: Display environment variables
+      ansible.builtin.debug:
+        msg: "{{ env_check.stdout_lines }}"

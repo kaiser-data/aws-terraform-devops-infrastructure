@@ -1,0 +1,61 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+# Alerting configuration (optional - can be added later)
+# alerting:
+#   alertmanagers:
+#     - static_configs:
+#         - targets: []
+
+# Rule files (optional - can be added later)
+# rule_files:
+#   - "alerts.yml"
+
+scrape_configs:
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Node Exporter - Frontend
+  - job_name: 'frontend-node'
+    static_configs:
+      - targets: ['localhost:9100']
+        labels:
+          instance: 'frontend'
+          tier: 'frontend'
+
+  # Node Exporter - Backend (via frontend as proxy)
+  - job_name: 'backend-node'
+    static_configs:
+      - targets: ['10.0.2.139:9100']
+        labels:
+          instance: 'backend'
+          tier: 'backend'
+
+  # Node Exporter - Database (via frontend as proxy)
+  - job_name: 'database-node'
+    static_configs:
+      - targets: ['10.0.2.61:9100']
+        labels:
+          instance: 'database'
+          tier: 'database'
+
+  # Docker metrics (if available)
+  - job_name: 'docker'
+    static_configs:
+      - targets: ['localhost:9323']
+        labels:
+          instance: 'frontend'
+
+  # Application metrics (to be added when apps expose /metrics)
+  # - job_name: 'vote-app'
+  #   static_configs:
+  #     - targets: ['localhost:80']
+  #       metrics_path: '/metrics'
+
+  # - job_name: 'result-app'
+  #   static_configs:
+  #     - targets: ['localhost:5001']
+  #       metrics_path: '/metrics'

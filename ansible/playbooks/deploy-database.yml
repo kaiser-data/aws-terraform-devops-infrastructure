@@ -1,0 +1,49 @@
+---
+- name: Deploy PostgreSQL Database
+  hosts: database
+  become: yes
+  gather_facts: no
+
+  tasks:
+    - name: Create Docker volume for PostgreSQL data
+      community.docker.docker_volume:
+        name: postgres-data
+        state: present
+
+    - name: Pull PostgreSQL image
+      community.docker.docker_image:
+        name: "postgres:{{ postgres_image_tag }}"
+        source: pull
+        state: present
+
+    - name: Deploy PostgreSQL container
+      community.docker.docker_container:
+        name: postgres
+        image: "postgres:{{ postgres_image_tag }}"
+        state: started
+        restart_policy: always
+        ports:
+          - "5432:5432"
+        env:
+          POSTGRES_USER: "{{ postgres_user }}"
+          POSTGRES_PASSWORD: "{{ postgres_password }}"
+          POSTGRES_DB: "{{ postgres_db }}"
+        volumes:
+          - postgres-data:/var/lib/postgresql/data
+        healthcheck:
+          test: ["CMD-SHELL", "pg_isready -U postgres"]
+          interval: 10s
+          timeout: 5s
+          retries: 5
+
+    - name: Wait for PostgreSQL to be ready
+      ansible.builtin.wait_for:
+        host: "{{ ansible_host }}"
+        port: 5432
+        delay: 5
+        timeout: 60
+        state: started
+
+    - name: Display PostgreSQL status
+      ansible.builtin.debug:
+        msg: "PostgreSQL is running on {{ ansible_host }}:5432"

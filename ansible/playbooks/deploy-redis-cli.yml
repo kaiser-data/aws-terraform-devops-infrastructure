@@ -1,0 +1,61 @@
+---
+- name: Deploy Redis (Using Docker CLI)
+  hosts: backend
+  become: no  # Run as ubuntu user who has docker group membership
+  gather_facts: yes
+  vars_files:
+    - ../group_vars/all.yml
+
+  tasks:
+    - name: Pull Redis image
+      ansible.builtin.command:
+        cmd: "docker pull redis:{{ redis_image_tag }}"
+      register: pull_result
+      changed_when: "'Downloaded' in pull_result.stdout or 'Pulling' in pull_result.stdout"
+
+    - name: Stop existing Redis container if running
+      ansible.builtin.command:
+        cmd: docker stop redis
+      register: stop_result
+      failed_when: false
+      changed_when: stop_result.rc == 0
+
+    - name: Remove existing Redis container if exists
+      ansible.builtin.command:
+        cmd: docker rm redis
+      register: rm_result
+      failed_when: false
+      changed_when: rm_result.rc == 0
+
+    - name: Deploy Redis container
+      ansible.builtin.command:
+        cmd: >
+          docker run -d
+          --name redis
+          --restart always
+          -p {{ redis_port }}:6379
+          --health-cmd="redis-cli ping | grep PONG"
+          --health-interval=10s
+          --health-timeout=3s
+          --health-retries=3
+          redis:{{ redis_image_tag }}
+      register: deploy_result
+      changed_when: deploy_result.rc == 0
+
+    - name: Wait for Redis to be ready
+      ansible.builtin.wait_for:
+        host: "{{ ansible_host }}"
+        port: "{{ redis_port }}"
+        delay: 3
+        timeout: 30
+        state: started
+
+    - name: Verify Redis is running
+      ansible.builtin.command:
+        cmd: docker ps --filter name=redis --format "{%raw%}{{.Status}}{%endraw%}"
+      register: ps_result
+      changed_when: false
+
+    - name: Display Redis status
+      ansible.builtin.debug:
+        msg: "Redis is running on {{ ansible_host }}:{{ redis_port }} - Status: {{ ps_result.stdout }}"

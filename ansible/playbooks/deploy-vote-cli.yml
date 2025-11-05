@@ -1,0 +1,69 @@
+---
+- name: Deploy Vote App (Using Docker CLI)
+  hosts: frontend
+  become: no  # Run as ubuntu user who has docker group membership
+  gather_facts: yes
+  vars_files:
+    - ../group_vars/all.yml
+
+  tasks:
+    - name: Pull Vote image
+      ansible.builtin.command:
+        cmd: "docker pull {{ vote_image }}:{{ vote_image_tag }}"
+      register: pull_result
+      changed_when: "'Downloaded' in pull_result.stdout or 'Pulling' in pull_result.stdout"
+
+    - name: Stop existing Vote container if running
+      ansible.builtin.command:
+        cmd: docker stop vote
+      register: stop_result
+      failed_when: false
+      changed_when: stop_result.rc == 0
+
+    - name: Remove existing Vote container if exists
+      ansible.builtin.command:
+        cmd: docker rm vote
+      register: rm_result
+      failed_when: false
+      changed_when: rm_result.rc == 0
+
+    - name: Deploy Vote container
+      ansible.builtin.command:
+        cmd: >
+          docker run -d
+          --name vote
+          --restart always
+          -p {{ vote_port }}:80
+          -e REDIS_HOST={{ redis_host }}
+          -e REDIS_PORT={{ redis_port }}
+          {{ vote_image }}:{{ vote_image_tag }}
+      register: deploy_result
+      changed_when: deploy_result.rc == 0
+
+    - name: Wait for Vote app to be ready
+      ansible.builtin.wait_for:
+        host: "{{ ansible_host }}"
+        port: "{{ vote_port }}"
+        delay: 5
+        timeout: 60
+        state: started
+
+    - name: Verify Vote is running
+      ansible.builtin.command:
+        cmd: docker ps --filter name=vote --format "{%raw%}{{.Status}}{%endraw%}"
+      register: ps_result
+      changed_when: false
+
+    - name: Display Vote status
+      ansible.builtin.debug:
+        msg: "Vote app is running on http://{{ ansible_host }}:{{ vote_port }} - Status: {{ ps_result.stdout }}"
+
+    - name: Check Vote logs
+      ansible.builtin.command:
+        cmd: docker logs --tail 20 vote
+      register: logs_result
+      changed_when: false
+
+    - name: Display Vote logs
+      ansible.builtin.debug:
+        msg: "{{ logs_result.stdout_lines }}"

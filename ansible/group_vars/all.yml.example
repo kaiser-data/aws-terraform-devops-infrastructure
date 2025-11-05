@@ -1,0 +1,25 @@
+---
+# Global variables for all hosts
+# COPY THIS FILE TO all.yml AND UPDATE WITH YOUR VALUES
+# cp all.yml.example all.yml
+
+# Docker Hub username - UPDATE THIS WITH YOUR USERNAME
+dockerhub_username: "YOUR_DOCKERHUB_USERNAME"
+
+# Image versions
+vote_image_tag: "latest"
+result_image_tag: "latest"
+worker_image_tag: "latest"
+redis_image_tag: "alpine"
+postgres_image_tag: "15-alpine"
+
+# Database credentials - CHANGE THESE FOR PRODUCTION
+postgres_user: "postgres"
+postgres_password: "postgres"
+postgres_db: "postgres"
+
+# Application ports
+vote_port: 80
+result_port: 80
+redis_port: 6379
+postgres_port: 5432
