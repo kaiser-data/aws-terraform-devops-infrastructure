@@ -1,0 +1,103 @@
+<mxfile host="app.diagrams.net" modified="2025-11-06T00:00:00.000Z" agent="5.0" version="21.6.5" etag="draw.io-infrastructure" type="device">
+  <diagram name="AWS Infrastructure" id="aws-voting-app">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- AWS Cloud Container -->
+        <mxCell id="aws-cloud" value="AWS Cloud (ap-northeast-2)" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=14;fontStyle=1;container=1;pointerEvents=0;collapsible=0;recursiveResize=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_aws_cloud;strokeColor=#232F3E;fillColor=none;verticalAlign=top;align=left;spacingLeft=30;fontColor=#232F3E;dashed=0;" vertex="1" parent="1">
+          <mxGeometry x="80" y="120" width="1000" height="640" as="geometry" />
+        </mxCell>
+        
+        <!-- VPC -->
+        <mxCell id="vpc" value="VPC: time_circuit (10.0.0.0/16)" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=12;fontStyle=1;container=1;pointerEvents=0;collapsible=0;recursiveResize=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_vpc;strokeColor=#248814;fillColor=none;verticalAlign=top;align=left;spacingLeft=30;fontColor=#AAB7B8;dashed=0;" vertex="1" parent="aws-cloud">
+          <mxGeometry x="40" y="40" width="920" height="560" as="geometry" />
+        </mxCell>
+        
+        <!-- Internet Gateway -->
+        <mxCell id="igw" value="Internet Gateway&#xa;flux_gateway" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#4D27AA;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=1;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.internet_gateway;" vertex="1" parent="vpc">
+          <mxGeometry x="420" y="10" width="78" height="78" as="geometry" />
+        </mxCell>
+        
+        <!-- Public Subnet -->
+        <mxCell id="public-subnet" value="Public Subnet (10.0.1.0/24)" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=12;fontStyle=0;container=1;pointerEvents=0;collapsible=0;recursiveResize=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#248814;fillColor=#E9F3E6;verticalAlign=top;align=left;spacingLeft=30;fontColor=#248814;dashed=0;" vertex="1" parent="vpc">
+          <mxGeometry x="60" y="120" width="380" height="200" as="geometry" />
+        </mxCell>
+        
+        <!-- Frontend EC2 -->
+        <mxCell id="frontend-ec2" value="EC2: clocktower-frontend&#xa;Public IP: &lt;FRONTEND_IP&gt;&#xa;Private IP: 10.0.1.22&#xa;&#xa;Apps:&#xa;• Vote App :80&#xa;• Result App :5001&#xa;• Prometheus :9090&#xa;• Grafana :3000&#xa;• CloudWatch Agent" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#ED7100;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.ec2_instance;" vertex="1" parent="public-subnet">
+          <mxGeometry x="150" y="50" width="78" height="78" as="geometry" />
+        </mxCell>
+        
+        <!-- NAT Gateway -->
+        <mxCell id="nat-gw" value="NAT Gateway" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#4D27AA;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.nat_gateway;" vertex="1" parent="vpc">
+          <mxGeometry x="240" y="360" width="78" height="78" as="geometry" />
+        </mxCell>
+        
+        <!-- Private Subnet -->
+        <mxCell id="private-subnet" value="Private Subnet (10.0.2.0/24)" style="sketch=0;outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=12;fontStyle=0;container=1;pointerEvents=0;collapsible=0;recursiveResize=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_security_group;grStroke=0;strokeColor=#147EBA;fillColor=#E6F2F8;verticalAlign=top;align=left;spacingLeft=30;fontColor=#147EBA;dashed=0;" vertex="1" parent="vpc">
+          <mxGeometry x="480" y="120" width="400" height="400" as="geometry" />
+        </mxCell>
+        
+        <!-- Backend EC2 -->
+        <mxCell id="backend-ec2" value="EC2: doc-lab-proc&#xa;Private IP: &lt;BACKEND_IP&gt;&#xa;&#xa;Apps:&#xa;• Redis :6379&#xa;• Worker (.NET)&#xa;• Redis Exporter :9121&#xa;• CloudWatch Agent" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#ED7100;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.ec2_instance;" vertex="1" parent="private-subnet">
+          <mxGeometry x="60" y="80" width="78" height="78" as="geometry" />
+        </mxCell>
+        
+        <!-- Database EC2 -->
+        <mxCell id="db-ec2" value="EC2: timeline-db&#xa;Private IP: &lt;DB_IP&gt;&#xa;&#xa;Apps:&#xa;• PostgreSQL :5432&#xa;• Postgres Exporter :9187&#xa;• CloudWatch Agent" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#ED7100;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.ec2_instance;" vertex="1" parent="private-subnet">
+          <mxGeometry x="250" y="80" width="78" height="78" as="geometry" />
+        </mxCell>
+        
+        <!-- CloudWatch -->
+        <mxCell id="cloudwatch" value="CloudWatch&#xa;Metrics + Alarms" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#759C3E;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.cloudwatch;" vertex="1" parent="vpc">
+          <mxGeometry x="760" y="30" width="78" height="78" as="geometry" />
+        </mxCell>
+        
+        <!-- User/Internet -->
+        <mxCell id="user" value="Users" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#232F3E;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.user;" vertex="1" parent="1">
+          <mxGeometry x="520" y="20" width="78" height="78" as="geometry" />
+        </mxCell>
+        
+        <!-- Connections -->
+        <mxCell id="conn1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#232F3E;" edge="1" parent="1" source="user" target="igw">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="conn2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#232F3E;" edge="1" parent="1" source="igw" target="frontend-ec2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="conn3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#147EBA;dashed=1;dashPattern=5 5;" edge="1" parent="1" source="frontend-ec2" target="backend-ec2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="conn4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#147EBA;dashed=1;dashPattern=5 5;" edge="1" parent="1" source="backend-ec2" target="db-ec2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="conn5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#147EBA;dashed=1;dashPattern=5 5;" edge="1" parent="1" source="frontend-ec2" target="db-ec2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="conn6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#759C3E;dashed=1;" edge="1" parent="1" source="frontend-ec2" target="cloudwatch">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="conn7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#759C3E;dashed=1;" edge="1" parent="1" source="backend-ec2" target="cloudwatch">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="conn8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#759C3E;dashed=1;" edge="1" parent="1" source="db-ec2" target="cloudwatch">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <!-- Legend -->
+        <mxCell id="legend" value="Legend:&#xa;━━ Internet Traffic&#xa;- - - Internal Traffic&#xa;··· Monitoring" style="rounded=0;whiteSpace=wrap;html=1;fontSize=10;align=left;verticalAlign=top;fillColor=#F5F5F5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="80" y="780" width="200" height="60" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -18,6 +18,30 @@ This project demonstrates infrastructure as code (IaC) and configuration managem
 - **Private Subnet**: Database instance (PostgreSQL)
 - **Security**: Frontend acts as bastion host for private instance access
 
+![AWS Infrastructure Diagram](docs/screenshots/infrastructure-diagram.png)
+
+*Complete infrastructure diagram available in [draw.io format](docs/screenshots/infrastructure-diagram.drawio)*
+
+---
+
+## 📸 Project In Action
+
+### Live Monitoring Dashboard
+![Grafana Dashboard](docs/screenshots/grafana-dashboard.png)
+*Real-time infrastructure monitoring: CPU, Memory, Network metrics across all 3 EC2 instances*
+
+### Load Testing & Real-Time Results
+![Stress Test Demo](docs/screenshots/stress-test-result-demo.png)
+*Parallel stress testing achieving 40+ votes/second with live result updates*
+
+### Complete Infrastructure Automation
+![Terraform Destroy](docs/screenshots/terraform-destroy-automation.png)
+*Infrastructure as Code: 29 AWS resources deployed and destroyed with single commands*
+
+---
+
+**More Visual Documentation**: See [docs/screenshots/](docs/screenshots/) for additional materials
+
 ## 🗂️ Project Structure
 
 ```
@@ -409,4 +433,4 @@ Educational project - free to use and modify.
 
 **Author**: Marty McFly
 **Project**: IronHack DevOps Bootcamp - Project 1
-**Date**: November 2024
+**Date**: November 2025
