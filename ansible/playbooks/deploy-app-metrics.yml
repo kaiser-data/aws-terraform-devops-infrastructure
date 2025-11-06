@@ -1,0 +1,83 @@
+---
+- name: Deploy Application Metrics Exporters
+  hosts: all
+  become: no
+  gather_facts: yes
+
+  tasks:
+    - name: Deploy Redis Exporter (Backend)
+      when: inventory_hostname in groups['backend']
+      block:
+        - name: Stop existing Redis Exporter
+          ansible.builtin.command:
+            cmd: docker stop redis-exporter
+          failed_when: false
+
+        - name: Remove existing Redis Exporter
+          ansible.builtin.command:
+            cmd: docker rm redis-exporter
+          failed_when: false
+
+        - name: Deploy Redis Exporter
+          ansible.builtin.command:
+            cmd: >
+              docker run -d
+              --name redis-exporter
+              --restart always
+              --network host
+              oliver006/redis_exporter:latest
+              --redis.addr=redis://localhost:6379
+
+        - name: Verify Redis Exporter
+          ansible.builtin.command:
+            cmd: docker ps --filter name=redis-exporter
+          changed_when: false
+
+    - name: Deploy Postgres Exporter (Database)
+      when: inventory_hostname in groups['database']
+      block:
+        - name: Stop existing Postgres Exporter
+          ansible.builtin.command:
+            cmd: docker stop postgres-exporter
+          failed_when: false
+
+        - name: Remove existing Postgres Exporter
+          ansible.builtin.command:
+            cmd: docker rm postgres-exporter
+          failed_when: false
+
+        - name: Deploy Postgres Exporter
+          ansible.builtin.command:
+            cmd: >
+              docker run -d
+              --name postgres-exporter
+              --restart always
+              --network host
+              -e DATA_SOURCE_NAME="postgresql://postgres:postgres@localhost:5432/postgres?sslmode=disable"
+              prometheuscommunity/postgres-exporter:latest
+
+        - name: Verify Postgres Exporter
+          ansible.builtin.command:
+            cmd: docker ps --filter name=postgres-exporter
+          changed_when: false
+
+        - name: Create custom vote count exporter script
+          ansible.builtin.copy:
+            content: |
+              #!/bin/bash
+              # Custom exporter for vote counts
+              while true; do
+                COUNT=$(docker exec postgres psql -U postgres -d postgres -t -c "SELECT COUNT(*) FROM votes;" 2>/dev/null | tr -d ' ')
+                echo "# HELP votes_total Total number of votes in database"
+                echo "# TYPE votes_total gauge"
+                echo "votes_total $COUNT"
+                sleep 5
+              done
+            dest: /tmp/vote-exporter.sh
+            mode: '0755'
+
+  handlers:
+    - name: restart prometheus
+      ansible.builtin.command:
+        cmd: docker restart prometheus
+      delegate_to: frontend-instance

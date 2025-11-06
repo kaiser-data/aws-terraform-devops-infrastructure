@@ -29,7 +29,7 @@ scrape_configs:
   # Node Exporter - Backend (via frontend as proxy)
   - job_name: 'backend-node'
     static_configs:
-      - targets: ['10.0.2.139:9100']
+      - targets: ['10.0.2.75:9100']
         labels:
           instance: 'backend'
           tier: 'backend'
@@ -37,7 +37,7 @@ scrape_configs:
   # Node Exporter - Database (via frontend as proxy)
   - job_name: 'database-node'
     static_configs:
-      - targets: ['10.0.2.61:9100']
+      - targets: ['10.0.2.115:9100']
         labels:
           instance: 'database'
           tier: 'database'
@@ -49,13 +49,18 @@ scrape_configs:
         labels:
           instance: 'frontend'
 
-  # Application metrics (to be added when apps expose /metrics)
-  # - job_name: 'vote-app'
-  #   static_configs:
-  #     - targets: ['localhost:80']
-  #       metrics_path: '/metrics'
+  # Redis Exporter - Backend (queue metrics)
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['10.0.2.75:9121']
+        labels:
+          instance: 'backend'
+          app: 'redis'
 
-  # - job_name: 'result-app'
-  #   static_configs:
-  #     - targets: ['localhost:5001']
-  #       metrics_path: '/metrics'
+  # Postgres Exporter - Database (vote count metrics)
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['10.0.2.115:9187']
+        labels:
+          instance: 'database'
+          app: 'postgres'

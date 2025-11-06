@@ -34,7 +34,8 @@
           --name result
           --restart always
           -p {{ result_port }}:80
-          -e POSTGRES_HOST={{ postgres_host }}
+          --add-host db:{{ postgres_host }}
+          -e POSTGRES_HOST=db
           -e POSTGRES_PORT={{ postgres_port }}
           -e POSTGRES_USER={{ postgres_user }}
           -e POSTGRES_PASSWORD={{ postgres_password }}

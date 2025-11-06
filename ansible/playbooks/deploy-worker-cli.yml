@@ -33,9 +33,11 @@
           docker run -d
           --name worker
           --restart always
-          -e REDIS_HOST={{ redis_host }}
+          --add-host redis:{{ redis_host }}
+          --add-host db:{{ postgres_host }}
+          -e REDIS_HOST=redis
           -e REDIS_PORT={{ redis_port }}
-          -e POSTGRES_HOST={{ postgres_host }}
+          -e POSTGRES_HOST=db
           -e POSTGRES_PORT={{ postgres_port }}
           -e POSTGRES_USER={{ postgres_user }}
           -e POSTGRES_PASSWORD={{ postgres_password }}

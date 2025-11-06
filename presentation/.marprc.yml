@@ -1,0 +1,16 @@
+# Marp Configuration for Professional Presentations
+
+# Use Gaia theme (professional, clean)
+themeSet: gaia
+
+# PDF output settings
+options:
+  # Enable HTML output
+  html: true
+
+  # PDF settings
+  pdf: true
+  pdfOutlines: true
+
+  # Allow local files
+  allowLocalFiles: true

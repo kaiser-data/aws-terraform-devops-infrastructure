@@ -29,36 +29,49 @@ project_multistack_devops_app/
 │   ├── network.tf               # VPC, subnets, routing
 │   ├── security.tf              # Security groups
 │   ├── instances.tf             # EC2 instances
+│   ├── cloudwatch.tf            # CloudWatch monitoring
 │   ├── outputs.tf               # Output values
-│   ├── local.tf                 # Deployment info generation
-│   ├── terraform.tfvars         # Variable values (gitignored)
 │   └── terraform-backend/       # Remote state backend setup
-│       ├── main.tf              # S3 + DynamoDB for state
-│       ├── provider.tf
-│       ├── variables.tf
-│       └── outputs.tf
 │
 ├── ansible/                      # Configuration Management
 │   ├── ansible.cfg              # Ansible configuration
-│   ├── inventory/
-│   │   └── hosts.yml            # Host inventory
+│   ├── inventory/hosts.yml      # Host inventory (gitignored)
 │   ├── group_vars/              # Variable definitions
-│   │   ├── all.yml              # Global variables
-│   │   ├── frontend.yml         # Frontend variables
-│   │   ├── backend.yml          # Backend variables
-│   │   └── database.yml         # Database variables
-│   ├── playbooks/
-│   │   ├── install-docker.yml   # Install Docker
-│   │   ├── deploy-all.yml       # Master deployment
-│   │   ├── deploy-database.yml  # Deploy PostgreSQL
-│   │   ├── deploy-backend.yml   # Deploy Redis + Worker
-│   │   ├── deploy-frontend.yml  # Deploy Vote + Result
-│   │   ├── check-logs.yml       # Check container logs
-│   │   ├── stop-all.yml         # Stop all containers
-│   │   └── test-connectivity.yml # Test network connectivity
-│   ├── update-inventory.sh      # Auto-update inventory from Terraform
-│   ├── README.md                # Ansible documentation
-│   └── SSH_BASTION_SETUP.md     # SSH bastion guide
+│   └── playbooks/
+│       ├── install-docker.yml   # Install Docker
+│       ├── deploy-*-cli.yml     # Component deployment playbooks
+│       ├── deploy-monitoring.yml # Prometheus/Grafana
+│       ├── deploy-app-metrics.yml # Redis/Postgres exporters
+│       ├── setup-cloudwatch.yml # CloudWatch Agent
+│       ├── test-connectivity.yml # Network tests
+│       ├── check-logs.yml       # Container logs
+│       └── stop-all.yml         # Stop all containers
+│
+├── monitoring/                   # Monitoring & Demo Scripts
+│   ├── prometheus/              # Prometheus configs
+│   ├── grafana/                 # Grafana dashboards
+│   ├── cloudwatch/              # CloudWatch configs
+│   ├── quick-stress.sh          # Load testing (random votes)
+│   ├── stress-test.sh           # Advanced load testing
+│   ├── vote-cats.sh             # Vote for cats demo
+│   ├── vote-dogs.sh             # Vote for dogs demo
+│   ├── reset-db-simple.sh       # Database reset
+│   ├── check-votes.sh           # Vote count checker
+│   └── *.md                     # Monitoring documentation
+│
+├── presentation/                 # Project Presentation
+│   ├── PRESENTATION.md          # Marp presentation
+│   ├── images/                  # Presentation images
+│   ├── generate-presentation.sh # PDF generator
+│   └── *.md                     # Presentation guides
+│
+├── docs/                         # Documentation
+│   ├── ANSIBLE_EXPLAINED.md     # Ansible architecture
+│   ├── ANSIBLE_CONTROL_NODE.md  # Control node setup
+│   ├── ANSIBLE_GALAXY_ROLES.md  # Galaxy roles info
+│   ├── MONITORING_ARCHITECTURE.md # Monitoring deep dive
+│   ├── COMPONENTS_GUIDE.md      # Component architecture
+│   └── QUICK_REFERENCE.md       # Quick reference guide
 │
 └── README.md                     # This file
 ```

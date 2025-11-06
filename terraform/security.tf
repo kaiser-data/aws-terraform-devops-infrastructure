@@ -83,6 +83,14 @@ resource "aws_security_group" "sg_backend" {
     security_groups = [aws_security_group.sg_frontend.id]
   }
 
+  # Node Exporter for Prometheus monitoring
+  ingress {
+    from_port       = 9100
+    to_port         = 9100
+    protocol        = "tcp"
+    security_groups = [aws_security_group.sg_frontend.id]
+  }
+
   # Allow all outbound (worker needs to reach postgres + internet for packages)
   egress {
     from_port   = 0
@@ -122,6 +130,14 @@ resource "aws_security_group" "sg_database" {
   ingress {
     from_port       = 5432
     to_port         = 5432
+    protocol        = "tcp"
+    security_groups = [aws_security_group.sg_frontend.id]
+  }
+
+  # Node Exporter for Prometheus monitoring
+  ingress {
+    from_port       = 9100
+    to_port         = 9100
     protocol        = "tcp"
     security_groups = [aws_security_group.sg_frontend.id]
   }

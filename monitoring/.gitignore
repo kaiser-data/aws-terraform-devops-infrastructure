@@ -1,0 +1,12 @@
+
+# Test Artifacts
+monitoring/test-results/
+*.txt
+
+# Generated PDFs (can be regenerated)
+presentation/*.pdf
+
+# Temporary Downloads
+*.deb
+*.rpm
+*.tar.gz
