@@ -10,7 +10,7 @@ echo ""
 echo "1️⃣  SEQUENTIAL (one at a time):"
 START=$(date +%s)
 for i in {1..10}; do
-    curl -s -X POST -d "vote=a" http://3.36.116.222:80/ > /dev/null
+    curl -s -X POST -d "vote=a" http://${FRONTEND_IP}:80/ > /dev/null
     echo -n "▓"
 done
 END=$(date +%s)
@@ -24,7 +24,7 @@ sleep 2
 # Parallel
 echo "2️⃣  PARALLEL (10 at once with -P 10):"
 START=$(date +%s)
-seq 1 10 | xargs -I{} -P 10 sh -c "curl -s -X POST -d 'vote=a' http://3.36.116.222:80/ > /dev/null && echo -n '▓'"
+seq 1 10 | xargs -I{} -P 10 sh -c "curl -s -X POST -d 'vote=a' http://${FRONTEND_IP}:80/ > /dev/null && echo -n '▓'"
 END=$(date +%s)
 PAR_TIME=$((END - START))
 echo ""

@@ -1,7 +1,7 @@
 #!/bin/bash
 # Test random voting logic
 
-VOTE_URL="http://3.36.116.222:80"
+VOTE_URL="http://${FRONTEND_IP}:80"
 CATS=0
 DOGS=0
 

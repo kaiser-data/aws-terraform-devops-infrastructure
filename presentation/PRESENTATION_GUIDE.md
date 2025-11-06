@@ -18,20 +18,20 @@ cd ~/ironhack/project_multistack_devops_app/monitoring
 Open these in your browser:
 
 **Tab 1: Vote App**
-- URL: http://3.36.116.222:80
+- URL: http://<FRONTEND_IP>:80
 - What it shows: User voting interface
 
 **Tab 2: Result App**
-- URL: http://3.36.116.222:5001
+- URL: http://<FRONTEND_IP>:5001
 - What it shows: Real-time vote results
 
 **Tab 3: Grafana Dashboard**
-- URL: http://3.36.116.222:3000/d/voting-app-demo
+- URL: http://<FRONTEND_IP>:3000/d/voting-app-demo
 - Login: admin / admin
 - What it shows: System metrics and data flow
 
 **Tab 4: Prometheus Targets** (optional)
-- URL: http://3.36.116.222:9090/targets
+- URL: http://<FRONTEND_IP>:9090/targets
 - What it shows: Monitoring health status
 
 ### 3. Quick Health Check
@@ -279,7 +279,7 @@ docker restart vote
 ### Network Issues
 ```bash
 # Check all targets
-curl http://3.36.116.222:9090/api/v1/targets
+curl http://<FRONTEND_IP>:9090/api/v1/targets
 ```
 
 ### Container Down

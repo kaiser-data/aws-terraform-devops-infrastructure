@@ -8,10 +8,10 @@
 ## Root Cause Analysis
 
 ### Problem
-The Vote application container was trying to connect to Redis using hostname `redis` instead of the private IP `10.0.2.75`.
+The Vote application container was trying to connect to Redis using hostname `redis` instead of the private IP `<BACKEND_IP>`.
 
 ### Why It Happened
-1. Environment variables (`REDIS_HOST=10.0.2.75`) were configured in the container
+1. Environment variables (`REDIS_HOST=<BACKEND_IP>`) were configured in the container
 2. However, the Python Flask app loads environment variables at module initialization
 3. Simply restarting the container doesn't reload the module-level variables
 4. The app cached the default value `redis` from `os.getenv('REDIS_HOST', 'redis')`
@@ -28,11 +28,11 @@ ssh frontend-instance "docker logs vote --tail 50"
 ```bash
 ssh frontend-instance "docker exec vote env | grep REDIS"
 ```
-**Finding**: Variables were set correctly (REDIS_HOST=10.0.2.75)
+**Finding**: Variables were set correctly (REDIS_HOST=<BACKEND_IP>)
 
 **Step 3: Test Redis Connectivity**
 ```bash
-ssh frontend-instance "timeout 2 bash -c 'cat < /dev/null > /dev/tcp/10.0.2.75/6379'"
+ssh frontend-instance "timeout 2 bash -c 'cat < /dev/null > /dev/tcp/<BACKEND_IP>/6379'"
 ```
 **Finding**: Redis was reachable on private network
 
@@ -58,7 +58,7 @@ ansible-playbook playbooks/deploy-vote-cli.yml
 1. Removes old container completely
 2. Creates new container with fresh environment
 3. Python app loads environment variables correctly on initial startup
-4. Redis connection uses correct private IP (10.0.2.75)
+4. Redis connection uses correct private IP (<BACKEND_IP>)
 
 ## Verification
 
@@ -72,29 +72,29 @@ ssh frontend-instance "docker ps --filter name=vote"
 ```bash
 ssh frontend-instance "docker exec vote env | grep REDIS"
 # Output:
-# REDIS_HOST=10.0.2.75
+# REDIS_HOST=<BACKEND_IP>
 # REDIS_PORT=6379
 ```
 
 **Application Access:**
 ```bash
-curl http://3.36.116.222:80
+curl http://<FRONTEND_IP>:80
 # HTTP 200 - "Cats vs Dogs!" page loads
 ```
 
 ## Testing Instructions
 
 ### Manual Browser Test
-1. Open: http://3.36.116.222:80
+1. Open: http://<FRONTEND_IP>:80
 2. Click either "Cats" or "Dogs"
 3. Should see checkmark indicating successful vote
-4. Open: http://3.36.116.222:5001
+4. Open: http://<FRONTEND_IP>:5001
 5. Should see vote counts displayed
 
 ### Command Line Test
 ```bash
 # Test vote submission
-curl -X POST http://3.36.116.222:80 \
+curl -X POST http://<FRONTEND_IP>:80 \
   -H "Content-Type: application/x-www-form-urlencoded" \
   -d "vote=a" \
   -b "voter_id=test123" \
@@ -132,7 +132,7 @@ ansible-playbook playbooks/deploy-vote-cli.yml
 ## Related Components
 
 **Vote App Dependencies:**
-- Redis (Backend: 10.0.2.75:6379) - Message queue
+- Redis (Backend: <BACKEND_IP>:6379) - Message queue
 - Frontend Instance network access to Private Subnet
 - Security Group rules allowing traffic on port 6379
 

@@ -79,3 +79,22 @@ __pycache__/
 *$py.class
 .Python
 *.pyc
+
+# Terraform Plan Files
+terraform/tfplan
+*.tfplan
+tfplan
+tfplan.*
+
+# IDE Files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Test Results
+monitoring/test-results/
+
+# OS Specific
+.DS_Store
+Thumbs.db

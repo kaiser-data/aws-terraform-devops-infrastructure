@@ -1,7 +1,7 @@
 #!/bin/bash
 # Import Voting App Presentation Dashboard into Grafana
 
-GRAFANA_URL="http://3.36.116.222:3000"
+GRAFANA_URL="http://${FRONTEND_IP}:3000"
 GRAFANA_USER="admin"
 GRAFANA_PASS="admin"
 DASHBOARD_FILE="grafana/dashboards/voting-app-presentation.json"

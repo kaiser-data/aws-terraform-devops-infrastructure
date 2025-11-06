@@ -3,7 +3,7 @@
 # Usage: ./vote-cats.sh [votes] [parallel]
 # Example: ./vote-cats.sh 1000 40
 
-VOTE_URL="http://3.36.116.222:80"
+VOTE_URL="http://${FRONTEND_IP}:80"
 VOTES=${1:-1000}
 PARALLEL=${2:-40}
 
@@ -31,4 +31,4 @@ echo "Duration: ${DURATION}s"
 echo "Rate: $(echo "scale=2; ${VOTES} / ${DURATION}" | bc) votes/sec"
 echo ""
 echo "🐱 All votes for CATS!"
-echo "📊 Check results at: http://3.36.116.222:5001"
+echo "📊 Check results at: http://${FRONTEND_IP}:5001"

@@ -87,9 +87,18 @@ project_multistack_devops_app/
 5. **SSH Key Pair** created in AWS (ap-northeast-2 region)
 6. **Docker Hub Account** with published images
 
-### Step 1: Deploy Infrastructure with Terraform
+### Step 1: Configure Environment Variables
 
-#### 1.1: Set Up Remote State Backend (Optional but Recommended)
+Copy the example environment file and update with your values:
+
+```bash
+cp .env.example .env
+# Edit .env with your actual IP addresses after Terraform deployment
+```
+
+### Step 2: Deploy Infrastructure with Terraform
+
+#### 2.1: Set Up Remote State Backend (Optional but Recommended)
 
 ```bash
 cd terraform/terraform-backend/

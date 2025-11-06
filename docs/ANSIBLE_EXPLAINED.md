@@ -52,11 +52,11 @@ Your Laptop (Control Node)
     │
     └─ SSH Connections
         │
-        ├─→ Frontend (3.36.116.222) ─── Public SSH
+        ├─→ Frontend (<FRONTEND_IP>) ─── Public SSH
         │
-        ├─→ Backend (10.0.2.75) ──────── SSH via Frontend (ProxyJump)
+        ├─→ Backend (<BACKEND_IP>) ──────── SSH via Frontend (ProxyJump)
         │
-        └─→ Database (10.0.2.115) ────── SSH via Frontend (ProxyJump)
+        └─→ Database (<DB_IP>) ────── SSH via Frontend (ProxyJump)
 ```
 
 ---
@@ -76,20 +76,20 @@ all:
     frontend:
       hosts:
         frontend-instance:
-          ansible_host: 3.36.116.222        # Public IP
+          ansible_host: <FRONTEND_IP>        # Public IP
           ansible_user: ubuntu
           ansible_ssh_private_key_file: ~/.ssh/key.pem
 
     backend:
       hosts:
         backend-instance:
-          ansible_host: 10.0.2.75           # Private IP
+          ansible_host: <BACKEND_IP>           # Private IP
           ansible_ssh_common_args: '-o ProxyJump=frontend-instance'  # 🛡️ Through bastion!
 
     database:
       hosts:
         db-instance:
-          ansible_host: 10.0.2.115          # Private IP
+          ansible_host: <DB_IP>          # Private IP
           ansible_ssh_common_args: '-o ProxyJump=frontend-instance'  # 🛡️ Through bastion!
 ```
 
@@ -269,11 +269,11 @@ Database:
 
 ```yaml
 Frontend:
-  ✓ Can reach Redis (10.0.2.75:6379)?
-  ✓ Can reach PostgreSQL (10.0.2.115:5432)?
+  ✓ Can reach Redis (<BACKEND_IP>:6379)?
+  ✓ Can reach PostgreSQL (<DB_IP>:5432)?
 
 Backend:
-  ✓ Can reach PostgreSQL (10.0.2.115:5432)?
+  ✓ Can reach PostgreSQL (<DB_IP>:5432)?
 
 All:
   ✓ Check container environment variables
@@ -364,15 +364,15 @@ ansible-playbook -i inventory/hosts.yml playbooks/check-logs.yml
 ## 🛡️ Solving Problem #1: Private Network Access
 
 ### The Challenge:
-Backend (10.0.2.75) and Database (10.0.2.115) have NO public IPs.
+Backend (<BACKEND_IP>) and Database (<DB_IP>) have NO public IPs.
 
 ### Manual Approach (Without Ansible):
 ```bash
 # Step 1: SSH to bastion
-ssh -i key.pem ubuntu@3.36.116.222
+ssh -i key.pem ubuntu@<FRONTEND_IP>
 
 # Step 2: From bastion, SSH to backend
-ssh ubuntu@10.0.2.75
+ssh ubuntu@<BACKEND_IP>
 
 # Step 3: Run Docker commands
 docker pull ...
@@ -388,14 +388,14 @@ docker run ...
 ```yaml
 # Inventory configuration handles it automatically!
 backend-instance:
-  ansible_host: 10.0.2.75
+  ansible_host: <BACKEND_IP>
   ansible_ssh_common_args: '-o ProxyJump=frontend-instance'
 ```
 
 **What happens behind the scenes:**
 ```
-Ansible → SSH to Frontend (3.36.116.222)
-       → From Frontend, SSH to Backend (10.0.2.75)
+Ansible → SSH to Frontend (<FRONTEND_IP>)
+       → From Frontend, SSH to Backend (<BACKEND_IP>)
        → Execute Docker commands
        → Return results to Ansible
 ```
@@ -478,9 +478,9 @@ ansible-playbook -i inventory/hosts.yml playbooks/deploy-app-metrics.yml
 ansible-playbook -i inventory/hosts.yml playbooks/test-connectivity.yml
 
 # 6. Verify
-curl http://3.36.116.222        # Vote App
-curl http://3.36.116.222:5001   # Result App
-curl http://3.36.116.222:3000   # Grafana
+curl http://<FRONTEND_IP>        # Vote App
+curl http://<FRONTEND_IP>:5001   # Result App
+curl http://<FRONTEND_IP>:3000   # Grafana
 ```
 
 ---
@@ -502,7 +502,7 @@ curl http://3.36.116.222:3000   # Grafana
 
 # Test from Frontend → Redis (Backend)
 - name: Test Redis connectivity from frontend
-  ansible.builtin.shell: timeout 3 telnet 10.0.2.75 6379
+  ansible.builtin.shell: timeout 3 telnet <BACKEND_IP> 6379
   when: inventory_hostname in groups['frontend']
   register: redis_test
 
@@ -516,9 +516,9 @@ curl http://3.36.116.222:3000   # Grafana
 
 | Test | From | To | Verifies |
 |------|------|----|---------
-| Redis | Frontend (10.0.1.x) | Backend (10.0.2.75:6379) | sg_backend allows 6379 from sg_frontend |
-| PostgreSQL (Worker) | Backend (10.0.2.75) | Database (10.0.2.115:5432) | sg_database allows 5432 from sg_backend |
-| PostgreSQL (Result) | Frontend (10.0.1.x) | Database (10.0.2.115:5432) | sg_database allows 5432 from sg_frontend |
+| Redis | Frontend (10.0.1.x) | Backend (<BACKEND_IP>:6379) | sg_backend allows 6379 from sg_frontend |
+| PostgreSQL (Worker) | Backend (<BACKEND_IP>) | Database (<DB_IP>:5432) | sg_database allows 5432 from sg_backend |
+| PostgreSQL (Result) | Frontend (10.0.1.x) | Database (<DB_IP>:5432) | sg_database allows 5432 from sg_frontend |
 
 **Why this matters:**
 

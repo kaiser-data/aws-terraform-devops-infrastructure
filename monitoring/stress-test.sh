@@ -2,8 +2,8 @@
 # Voting App Stress Test - Test Infrastructure Limits
 # Shows system performance under various load levels
 
-VOTE_URL="http://3.36.116.222:80"
-RESULT_URL="http://3.36.116.222:5001"
+VOTE_URL="http://${FRONTEND_IP}:80"
+RESULT_URL="http://${FRONTEND_IP}:5001"
 
 # Colors for output
 RED='\033[0;31m'
@@ -226,8 +226,8 @@ echo ""
 echo -e "${CYAN}🔗 Quick Links:${NC}"
 echo -e "  Vote App:   ${VOTE_URL}"
 echo -e "  Results:    ${RESULT_URL}"
-echo -e "  Grafana:    http://3.36.116.222:3000/d/voting-app-demo"
-echo -e "  Prometheus: http://3.36.116.222:9090/targets"
+echo -e "  Grafana:    http://${FRONTEND_IP}:3000/d/voting-app-demo"
+echo -e "  Prometheus: http://${FRONTEND_IP}:9090/targets"
 echo ""
 
 # Save results to file

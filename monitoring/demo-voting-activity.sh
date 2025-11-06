@@ -1,8 +1,8 @@
 #!/bin/bash
 # Generate demo voting activity for presentation
 
-VOTE_URL="http://3.36.116.222:80"
-RESULT_URL="http://3.36.116.222:5001"
+VOTE_URL="http://${FRONTEND_IP}:80"
+RESULT_URL="http://${FRONTEND_IP}:5001"
 
 echo "🗳️  Generating demo voting activity..."
 echo ""
@@ -42,7 +42,7 @@ echo "   Vote App:   ${VOTE_URL}"
 echo "   Result App: ${RESULT_URL}"
 echo ""
 echo "📈 View metrics in Grafana:"
-echo "   http://3.36.116.222:3000/d/voting-app-demo"
+echo "   http://${FRONTEND_IP}:3000/d/voting-app-demo"
 echo ""
 echo "You should see:"
 echo "  ✅ Network traffic spike on Frontend"

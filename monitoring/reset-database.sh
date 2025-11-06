@@ -9,8 +9,8 @@ echo "========================"
 echo ""
 
 # Database connection details
-DB_HOST="10.0.2.115"
-FRONTEND_IP="3.36.116.222"
+DB_HOST="${DB_IP}"
+FRONTEND_IP="${FRONTEND_IP}"
 
 echo "📊 Current vote count:"
 ssh -o StrictHostKeyChecking=no -i ~/.ssh/voting-app-key.pem ubuntu@${FRONTEND_IP} \

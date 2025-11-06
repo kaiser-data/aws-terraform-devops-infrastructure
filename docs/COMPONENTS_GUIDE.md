@@ -38,7 +38,7 @@
 │  │  │  ┏━━━━━━━━━━━━━━━━━━━━━━━┓  │  │  ┏━━━━━━━━━━━━━━━┓  │  │ │
 │  │  │  ┃ Frontend Instance     ┃  │  │  ┃ Backend       ┃  │  │ │
 │  │  │  ┃ clocktower-frontend   ┃  │  │  ┃ doc-lab       ┃  │  │ │
-│  │  │  ┃ Public: 3.36.116.222  ┃  │  │  ┃ 10.0.2.75     ┃  │  │ │
+│  │  │  ┃ Public: <FRONTEND_IP>  ┃  │  │  ┃ <BACKEND_IP>     ┃  │  │ │
 │  │  │  ┃ Private: 10.0.1.x     ┃◄─┼──┼──┃               ┃  │  │ │
 │  │  │  ┃                       ┃  │  │  ┃ ┌───────────┐ ┃  │  │ │
 │  │  │  ┃ Containers:           ┃  │  │  ┃ │Redis      │ ┃  │  │ │
@@ -56,7 +56,7 @@
 │  │  │      │ Gateway     │         │  │  ┏━━━━━━━━━━━━━━━┓  │  │ │
 │  │  │      └─────────────┘         │  │  ┃ Database      ┃  │  │ │
 │  │  │                              │  │  ┃ timeline-db   ┃  │  │ │
-│  │  │                              │  │  ┃ 10.0.2.115    ┃  │  │ │
+│  │  │                              │  │  ┃ <DB_IP>    ┃  │  │ │
 │  │  └──────────────────────────────┘  │  ┃               ┃  │  │ │
 │  │                                     │  ┃ ┌───────────┐ ┃  │  │ │
 │  │                                     │  ┃ │PostgreSQL │ ┃  │  │ │
@@ -176,7 +176,7 @@ Internet Users → Vote/Result Apps → Redis → Worker → PostgreSQL
 **Role**: Public-facing application server + Bastion host
 
 **Network**:
-- Public IP: 3.36.116.222
+- Public IP: <FRONTEND_IP>
 - Private IP: 10.0.1.x (dynamic)
 - Subnet: Public (10.0.1.0/24)
 
@@ -206,7 +206,7 @@ Internet Users → Vote/Result Apps → Redis → Worker → PostgreSQL
 
 **Network**:
 - Public IP: None
-- Private IP: 10.0.2.75
+- Private IP: <BACKEND_IP>
 - Subnet: Private (10.0.2.0/24)
 
 **Security Group**: `bttf-backend-sg`
@@ -237,7 +237,7 @@ ssh backend-instance  # (with ProxyJump in ~/.ssh/config)
 
 **Network**:
 - Public IP: None
-- Private IP: 10.0.2.115
+- Private IP: <DB_IP>
 - Subnet: Private (10.0.2.0/24)
 
 **Security Group**: `bttf-database-sg`
@@ -295,7 +295,7 @@ ssh db-instance  # (with ProxyJump in ~/.ssh/config)
 - Real-time vote submission
 
 **Environment Variables**:
-- `REDIS_HOST`: 10.0.2.75 (Backend private IP)
+- `REDIS_HOST`: <BACKEND_IP> (Backend private IP)
 - `REDIS_PORT`: 6379
 - `OPTION_A`: Cats
 - `OPTION_B`: Dogs
@@ -340,9 +340,9 @@ ssh db-instance  # (with ProxyJump in ~/.ssh/config)
 5. Loops continuously
 
 **Environment Variables**:
-- `REDIS_HOST`: 10.0.2.75
+- `REDIS_HOST`: <BACKEND_IP>
 - `REDIS_PORT`: 6379
-- `POSTGRES_HOST`: 10.0.2.115
+- `POSTGRES_HOST`: <DB_IP>
 - `POSTGRES_PORT`: 5432
 - `POSTGRES_USER`: postgres
 - `POSTGRES_PASSWORD`: postgres
@@ -390,7 +390,7 @@ CREATE TABLE votes (
 - Responsive design
 
 **Environment Variables**:
-- `POSTGRES_HOST`: 10.0.2.115
+- `POSTGRES_HOST`: <DB_IP>
 - `POSTGRES_PORT`: 5432
 - `POSTGRES_USER`: postgres
 - `POSTGRES_PASSWORD`: postgres
@@ -429,8 +429,8 @@ GROUP BY vote;
 **Scrape Jobs**:
 1. **prometheus**: Self-monitoring (localhost:9090)
 2. **frontend-node**: Frontend system metrics (localhost:9100)
-3. **backend-node**: Backend system metrics (10.0.2.75:9100)
-4. **database-node**: Database system metrics (10.0.2.115:9100)
+3. **backend-node**: Backend system metrics (<BACKEND_IP>:9100)
+4. **database-node**: Database system metrics (<DB_IP>:9100)
 
 **Scrape Interval**: 15 seconds
 
@@ -442,7 +442,7 @@ GROUP BY vote;
 - Container metrics
 - System load
 
-**Access**: http://3.36.116.222:9090
+**Access**: http://<FRONTEND_IP>:9090
 
 **Status**: ⚠️ Not currently deployed (configuration exists)
 
@@ -462,7 +462,7 @@ GROUP BY vote;
 - Username: admin
 - Password: admin (change on first login)
 
-**Access**: http://3.36.116.222:3000
+**Access**: http://<FRONTEND_IP>:3000
 
 **Status**: ⚠️ Not currently deployed (configuration exists)
 
@@ -493,7 +493,7 @@ GROUP BY vote;
 2. Vote App (Flask) receives POST request
    │
    ├─ Generates/retrieves voter_id from cookie
-   ├─ Connects to Redis (10.0.2.75:6379)
+   ├─ Connects to Redis (<BACKEND_IP>:6379)
    │
    ▼
 3. Redis stores vote
@@ -508,7 +508,7 @@ GROUP BY vote;
    ├─ Retrieves vote data
    │
    ▼
-5. Worker writes to PostgreSQL (10.0.2.115:5432)
+5. Worker writes to PostgreSQL (<DB_IP>:5432)
    │
    ├─ INSERT INTO votes (voter_id, vote, created_at)
    │   VALUES ('abc123', 'Cats', NOW())
@@ -528,20 +528,20 @@ GROUP BY vote;
 ### Network Communication Paths
 
 **Public Traffic**:
-- User → Frontend (3.36.116.222:80) - Vote submission
-- User → Frontend (3.36.116.222:5001) - Results viewing
+- User → Frontend (<FRONTEND_IP>:80) - Vote submission
+- User → Frontend (<FRONTEND_IP>:5001) - Results viewing
 
 **Private Traffic** (within VPC):
-- Frontend → Backend (10.0.2.75:6379) - Redis operations
-- Frontend → Database (10.0.2.115:5432) - Result queries
-- Backend Worker → Backend Redis (10.0.2.75:6379) - Vote retrieval
-- Backend Worker → Database (10.0.2.115:5432) - Vote storage
+- Frontend → Backend (<BACKEND_IP>:6379) - Redis operations
+- Frontend → Database (<DB_IP>:5432) - Result queries
+- Backend Worker → Backend Redis (<BACKEND_IP>:6379) - Vote retrieval
+- Backend Worker → Database (<DB_IP>:5432) - Vote storage
 
 **Outbound Traffic** (via NAT):
 - All instances → Internet - Package updates, Docker pulls
 
 **SSH Traffic**:
-- Admin → Frontend (3.36.116.222:22) - Direct SSH
+- Admin → Frontend (<FRONTEND_IP>:22) - Direct SSH
 - Admin → Backend (via Frontend) - SSH ProxyJump
 - Admin → Database (via Frontend) - SSH ProxyJump
 
@@ -551,10 +551,10 @@ GROUP BY vote;
 
 ### Quick Access URLs
 ```
-Vote App:       http://3.36.116.222:80
-Result App:     http://3.36.116.222:5001
-Prometheus:     http://3.36.116.222:9090  (if deployed)
-Grafana:        http://3.36.116.222:3000  (if deployed)
+Vote App:       http://<FRONTEND_IP>:80
+Result App:     http://<FRONTEND_IP>:5001
+Prometheus:     http://<FRONTEND_IP>:9090  (if deployed)
+Grafana:        http://<FRONTEND_IP>:3000  (if deployed)
 ```
 
 ### SSH Access
@@ -587,7 +587,7 @@ ssh db-instance
 **Test Vote Flow**:
 ```bash
 # 1. Cast a vote
-curl -X POST http://3.36.116.222/vote -d "vote=a"
+curl -X POST http://<FRONTEND_IP>/vote -d "vote=a"
 
 # 2. Check Redis (from frontend)
 ssh frontend-instance
@@ -598,7 +598,7 @@ ssh db-instance
 docker exec -it postgres psql -U postgres -c "SELECT vote, COUNT(*) FROM votes GROUP BY vote;"
 
 # 4. View results
-curl http://3.36.116.222:5001
+curl http://<FRONTEND_IP>:5001
 ```
 
 **Check Container Logs**:

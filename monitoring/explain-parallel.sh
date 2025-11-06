@@ -17,7 +17,7 @@ START=$(date +%s)
 
 for i in {1..5}; do
     echo "  Request $i - starting..."
-    curl -s -X POST -d "vote=a" http://3.36.116.222:80/ > /dev/null
+    curl -s -X POST -d "vote=a" http://${FRONTEND_IP}:80/ > /dev/null
     echo "  Request $i - done!"
 done
 
@@ -49,7 +49,7 @@ echo "Starting 5 parallel requests..."
 START=$(date +%s)
 
 # The magic command: xargs with -P flag
-seq 1 5 | xargs -I{} -P 5 sh -c "echo '  Request {} - starting...' && curl -s -X POST -d 'vote=a' http://3.36.116.222:80/ > /dev/null && echo '  Request {} - done!'"
+seq 1 5 | xargs -I{} -P 5 sh -c "echo '  Request {} - starting...' && curl -s -X POST -d 'vote=a' http://${FRONTEND_IP}:80/ > /dev/null && echo '  Request {} - done!'"
 
 END=$(date +%s)
 DURATION=$((END - START))

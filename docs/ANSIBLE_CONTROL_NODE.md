@@ -48,7 +48,7 @@ Location: /home/marty/ironhack/project_multistack_devops_app/
 │  │  │                                                  │ │    │
 │  │  │  ┌──────────────────────────────────────────┐  │ │    │
 │  │  │  │  🛡️ Frontend (Bastion + Apps)           │  │ │    │
-│  │  │  │  Public IP: 3.36.116.222                 │  │ │    │
+│  │  │  │  Public IP: <FRONTEND_IP>                 │  │ │    │
 │  │  │  │  Private IP: 10.0.1.22                   │  │ │    │
 │  │  │  │  - Vote App                              │  │ │    │
 │  │  │  │  - Result App                            │  │ │    │
@@ -64,7 +64,7 @@ Location: /home/marty/ironhack/project_multistack_devops_app/
 │  │  │                                                  │ │    │
 │  │  │  ┌────────────────┐    ┌──────────────────┐   │ │    │
 │  │  │  │  Backend       │    │  Database        │   │ │    │
-│  │  │  │  10.0.2.75     │    │  10.0.2.115      │   │ │    │
+│  │  │  │  <BACKEND_IP>     │    │  <DB_IP>      │   │ │    │
 │  │  │  │  - Redis       │    │  - PostgreSQL    │   │ │    │
 │  │  │  │  - Worker      │    │  - Exporters     │   │ │    │
 │  │  │  │  - Exporters   │    │                  │   │ │    │
@@ -107,7 +107,7 @@ Managed Nodes (AWS Instances):
 ```
 Your Laptop
     │
-    └─ SSH to 3.36.116.222 (Frontend public IP)
+    └─ SSH to <FRONTEND_IP> (Frontend public IP)
        └─ Execute: docker ps, docker run, etc.
 ```
 
@@ -115,9 +115,9 @@ Your Laptop
 ```
 Your Laptop
     │
-    └─ SSH to 3.36.116.222 (Frontend)
+    └─ SSH to <FRONTEND_IP> (Frontend)
        │
-       └─ From Frontend, SSH to 10.0.2.75 (Backend)
+       └─ From Frontend, SSH to <BACKEND_IP> (Backend)
           └─ Execute: docker ps, docker run, etc.
 ```
 
@@ -126,7 +126,7 @@ Your Laptop
 ```yaml
 # In inventory/hosts.yml
 backend-instance:
-  ansible_host: 10.0.2.75
+  ansible_host: <BACKEND_IP>
   ansible_ssh_common_args: '-o ProxyJump=frontend-instance'
 ```
 
@@ -149,13 +149,13 @@ ansible-playbook -i inventory/hosts.yml playbooks/deploy-redis-cli.yml
 ```
 Step 1: Ansible reads inventory
   ↓
-  Target: backend-instance (10.0.2.75)
+  Target: backend-instance (<BACKEND_IP>)
   Connection: SSH via ProxyJump through frontend-instance
 
 Step 2: Ansible establishes SSH connection
   ↓
-  Your Laptop → SSH → Frontend (3.36.116.222)
-              → SSH → Backend (10.0.2.75)
+  Your Laptop → SSH → Frontend (<FRONTEND_IP>)
+              → SSH → Backend (<BACKEND_IP>)
 
 Step 3: Ansible gathers facts
   ↓

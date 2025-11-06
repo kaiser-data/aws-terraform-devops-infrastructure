@@ -16,9 +16,9 @@
 - ✅ Documented complete process for team learning
 
 ### New IPs After Rebuild
-- **Frontend**: 3.36.116.222 (was 13.124.72.188)
-- **Backend**: 10.0.2.75 (was 10.0.2.139)
-- **Database**: 10.0.2.115 (was 10.0.2.61)
+- **Frontend**: <FRONTEND_IP> (was 13.124.72.188)
+- **Backend**: <BACKEND_IP> (was 10.0.2.139)
+- **Database**: <DB_IP> (was 10.0.2.61)
 
 ---
 

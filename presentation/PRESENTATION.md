@@ -102,7 +102,7 @@ Internet (0.0.0.0/0)│       │       │
     │   │  │  - Prometheus :9090            │  │
     │   │  │  - Grafana :3000               │  │
     │   │  │  - CloudWatch Agent            │  │
-    │   │  │  Public IP: 3.36.116.222       │  │
+    │   │  │  Public IP: <FRONTEND_IP>      │  │
     │   │  └────────────────────────────────┘  │
     │   └─────────────────┬──────────────────────┘
     │                     │ SSH Jump
@@ -116,8 +116,8 @@ Internet (0.0.0.0/0)│       │       │
     │   │  │  doc-lab-proc   │  │timeline-db │  │
     │   │  │  - Redis :6379  │  │ - PG :5432 │  │
     │   │  │  - Worker       │  │ - CW Agent │  │
-    │   │  │  - CW Agent     │  │IP:10.0.2.115│ │
-    │   │  │  IP: 10.0.2.75  │  └────────────┘  │
+    │   │  │  - CW Agent     │  │IP:<DB_IP>  │ │
+    │   │  │  IP: <BACKEND_IP> │  └──────────┘  │
     │   │  └─────────────────┘                   │
     │   └────────────────────────────────────────┘
 ```
@@ -325,11 +325,11 @@ Curious about these tools - heard so often, high importance for applications
 ## Live Demo
 
 **1. Vote & Result Apps**
-- Vote: http://3.36.116.222
-- Result: http://3.36.116.222:5001
+- Vote: http://<FRONTEND_IP>
+- Result: http://<FRONTEND_IP>:5001
 
 **2. Monitoring**
-- Grafana: http://3.36.116.222:3000
+- Grafana: http://<FRONTEND_IP>:3000
 
 **3. Stress Test**
 ```bash
@@ -349,8 +349,8 @@ SELECT vote, COUNT(*) FROM votes GROUP BY vote;
 *AWS Solution Architecture | Infrastructure as Code*
 
 **Access:**
-- 🗳️ Vote: http://3.36.116.222
-- 📊 Grafana: http://3.36.116.222:3000
+- 🗳️ Vote: http://<FRONTEND_IP>
+- 📊 Grafana: http://<FRONTEND_IP>:3000
 - 💾 GitHub: https://github.com/kaiser-data/aws-terraform-devops-infrastructure
 
 **Key Takeaways:**

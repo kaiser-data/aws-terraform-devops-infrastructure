@@ -3,7 +3,7 @@
 # Usage: ./quick-stress.sh [votes] [parallel]
 # Example: ./quick-stress.sh 100 10
 
-VOTE_URL="http://3.36.116.222:80"
+VOTE_URL="http://${FRONTEND_IP}:80"
 VOTES=${1:-100}
 PARALLEL=${2:-10}
 
@@ -38,4 +38,4 @@ echo "✅ Complete!"
 echo "Duration: ${DURATION}s"
 echo "Rate: $(echo "scale=2; ${VOTES} / ${DURATION}" | bc) votes/sec"
 echo ""
-echo "📊 Check results at: http://3.36.116.222:5001"
+echo "📊 Check results at: http://${FRONTEND_IP}:5001"

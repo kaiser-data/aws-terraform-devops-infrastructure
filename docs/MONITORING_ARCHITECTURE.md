@@ -25,7 +25,7 @@ This project uses **dual monitoring** for different purposes:
 │                                                                   │
 │  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────┐ │
 │  │  Frontend        │  │  Backend         │  │  Database    │ │
-│  │  10.0.1.22       │  │  10.0.2.75       │  │  10.0.2.115  │ │
+│  │  10.0.1.22       │  │  <BACKEND_IP>       │  │  <DB_IP>  │ │
 │  │                  │  │                  │  │              │ │
 │  │  Node Exporter   │  │  Node Exporter   │  │ Node Exporter│ │
 │  │  :9100           │  │  :9100           │  │ :9100        │ │
@@ -96,7 +96,7 @@ This project uses **dual monitoring** for different purposes:
 │                                                                   │
 │  ┌────────────────────────────────────────────────────────────┐ │
 │  │  Web UI :3000                                              │ │
-│  │  • You access: http://3.36.116.222:3000                   │ │
+│  │  • You access: http://<FRONTEND_IP>:3000                   │ │
 │  │  • Shows: Voting Application Architecture dashboard       │ │
 │  │  • Real-time graphs of CPU, Memory, Network               │ │
 │  └────────────────────────────────────────────────────────────┘ │
@@ -162,26 +162,26 @@ scrape_configs:
   # Backend Node Exporter (via private IP)
   - job_name: 'backend-node'
     static_configs:
-      - targets: ['10.0.2.75:9100']    # Prometheus reaches backend
+      - targets: ['<BACKEND_IP>:9100']    # Prometheus reaches backend
         labels:
           instance: 'backend'
 
   # Database Node Exporter (via private IP)
   - job_name: 'database-node'
     static_configs:
-      - targets: ['10.0.2.115:9100']   # Prometheus reaches database
+      - targets: ['<DB_IP>:9100']   # Prometheus reaches database
         labels:
           instance: 'database'
 
   # Redis Exporter (application metrics)
   - job_name: 'redis'
     static_configs:
-      - targets: ['10.0.2.75:9121']
+      - targets: ['<BACKEND_IP>:9121']
 
   # Postgres Exporter (application metrics)
   - job_name: 'postgres'
     static_configs:
-      - targets: ['10.0.2.115:9187']
+      - targets: ['<DB_IP>:9187']
 ```
 
 ---
@@ -193,10 +193,10 @@ scrape_configs:
 1. **Sends HTTP GET request** to each target:
    ```
    GET http://10.0.1.22:9100/metrics
-   GET http://10.0.2.75:9100/metrics
-   GET http://10.0.2.115:9100/metrics
-   GET http://10.0.2.75:9121/metrics
-   GET http://10.0.2.115:9187/metrics
+   GET http://<BACKEND_IP>:9100/metrics
+   GET http://<DB_IP>:9100/metrics
+   GET http://<BACKEND_IP>:9121/metrics
+   GET http://<DB_IP>:9187/metrics
    ```
 
 2. **Receives metrics** as plain text
@@ -302,7 +302,7 @@ Update graphs
 │                                                                   │
 │  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────┐ │
 │  │  Frontend        │  │  Backend         │  │  Database    │ │
-│  │  10.0.1.22       │  │  10.0.2.75       │  │  10.0.2.115  │ │
+│  │  10.0.1.22       │  │  <BACKEND_IP>       │  │  <DB_IP>  │ │
 │  │                  │  │                  │  │              │ │
 │  │  ┌────────────┐  │  │  ┌────────────┐  │  │ ┌──────────┐│ │
 │  │  │ CW Agent   │  │  │  │ CW Agent   │  │  │ │ CW Agent ││ │
@@ -672,7 +672,7 @@ resource "aws_instance" "frontend" {
 | **Visualizations** | Beautiful, flexible | Basic, functional |
 | **Setup Complexity** | Medium (need Prometheus) | Low (AWS managed) |
 | **Best For** | Real-time debugging | Production monitoring |
-| **Access** | http://3.36.116.222:3000 | AWS Console |
+| **Access** | http://<FRONTEND_IP>:3000 | AWS Console |
 
 ---
 
