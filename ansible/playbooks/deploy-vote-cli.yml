@@ -34,7 +34,8 @@
           --name vote
           --restart always
           -p {{ vote_port }}:80
-          -e REDIS_HOST={{ redis_host }}
+          --add-host redis:{{ redis_host }}
+          -e REDIS_HOST=redis
           -e REDIS_PORT={{ redis_port }}
           {{ vote_image }}:{{ vote_image_tag }}
       register: deploy_result
